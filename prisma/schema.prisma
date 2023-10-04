@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// model User {
+//   id         Int      @id @default(autoincrement())
+//   externalId String   @unique
+//   attributes Json
+//   createdAt  DateTime @default(now())
+//   updatedAt  DateTime @updatedAt
+// }
+
+model User {
+  id String @id @unique
+  resumes      Resume[]
+  coverLetters CoverLetter[]
+  Message      Message[]
+  apiKey       String?       @unique
+}
+
+//   subscription    UserSubscription? // Define the relationship to UserSubscription
+// }
+
+// model UserSubscription {
+//   id                     Int       @id @default(autoincrement())
+//   userId                 String?   @unique
+//   stripeCustomerId       String?   @unique
+//   stripeSubscriptionId   String?
+//   stripePriceId          String?
+//   stripeCurrentPeriodEnd DateTime?
+//   user                   User?     @relation(fields: [userId], references: [id]) // Define the relationship to User
+
+//   @@index([userId])
+// }
+
+model Resume {
+  id            Int     @id @default(autoincrement())
+  originalText  String? @db.Text
+  generatedText String? @db.Text
+  userId        String?
+  createdBy     User?   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model CoverLetter {
+  id            Int     @id @default(autoincrement())
+  originalText  String? @db.Text
+  generatedText String? @db.Text
+  userId        String?
+  createdBy     User?   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Message {
+  id            Int     @id @default(autoincrement())
+  originalText  String  @db.Text
+  generatedText String  @db.Text
+  userId        String?
+  createdBy     User?   @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
